@@ -1,0 +1,205 @@
+#ifndef DECK_H
+#define DECK_H
+
+#include <stdlib.h>
+//#include "player.h"
+#include "card.h"
+#include <stdio.h>
+#include <time.h>
+/*
+ * Structure: deck
+ * ---------------
+ *  An array of 52 cards.
+ */
+struct deck {
+  struct card list[52]; 
+  int top_card;
+};
+/* 
+ * Variable: deck_instance
+ * -----------------------
+ *
+ * Go Fish uses a single deck
+ */
+struct deck deck_instance;  // this is deck_instance of type deck
+/*
+ * Function: shuffle
+ * --------------------
+ *  Initializes deck_instance and shuffles it.
+ *  Resets the deck if a prior game has been played.
+ * 
+ *  returns: 0 if no error, and non-zero on error
+
+takes in the array deck_instance and the length of the card list
+ */
+
+int shuffle(){
+char R[13]={'A','2','3','4','5','6','7','8','9','1','J','Q','K'};//ranks
+char S[4]={'C','D','H','S'};	//suit		     						
+//need to append all R to each S so "CA","C2","C3"....[0],[1],[2]
+int element=0; // keeps track of elements in list
+//deck_instance.list[element]=S[i]R[J] 
+for (int i=0;i<4;i++){// all 4 suits
+	for (int j=0;j<13;j++) {// all 13 ranks
+// if the number 10 is drawn, it is represented as a 1 and 0 is appended	
+//struct rank[2] is 2 char long so [0] and [1] can be used		
+		deck_instance.list[element].suit=S[i]; // struct suite is 1 char
+		if (R[j]=='1'){
+// creates '10' kinda like deck_instance.list[counter].rank="10";
+		deck_instance.list[element].rank[0]='1';
+		deck_instance.list[element].rank[1]='0';        }
+		
+		if (R[j]!='1'){
+			deck_instance.list[element].rank[0]=R[j];   //only 1 element used  
+		  deck_instance.list[element].rank[1]='\0';	} //may need this line
+
+// chars use %c and \n is new line
+	printf("%c%c%c \n",deck_instance.list[element].suit,deck_instance.list[element].rank[0],deck_instance.list[element].rank[1]);
+		element++;
+}}
+// end creating the deck
+printf("\n");
+									// need to now shuffle the deck	//
+int length= sizeof deck_instance.list / sizeof deck_instance.list[0]; 
+printf("deck length:%d \n",length); // 52
+
+
+// %p is the pointer address so these are the pointer locations
+//				printf("%p \n",deck_instance.list[0] );
+// pointer prints 'nil' when out bounds
+//				  printf("%p \n",deck_instance.list[53] ); 
+
+
+for (int i=0;i<length;i++){
+	srand ( time(NULL) );	// this creates the seed to randomize
+	int randomElement=rand()%(52-i); //will swap every element with another element at least once, so position [0],..[52] will get swapped with some other element once  random 
+
+// SUPPOSD TO CHANGE THE POINTER POSITION NOT THE ACTUAL DATA
+//need to swap the suit and rank seperately, use a temp 
+char	tempSuit=deck_instance.list[i].suit;
+char	tempRank0=deck_instance.list[i].rank[0];
+char	tempRank1=deck_instance.list[i].rank[1];
+
+	deck_instance.list[i].suit=deck_instance.list[randomElement].suit;
+	deck_instance.list[i].rank[0]=deck_instance.list[randomElement].rank[0];
+	deck_instance.list[i].rank[1]=deck_instance.list[randomElement].rank[1];
+	
+	deck_instance.list[randomElement].suit=tempSuit;
+	deck_instance.list[randomElement].rank[0]=tempRank0;
+	deck_instance.list[randomElement].rank[1]=tempRank1;
+}
+// prints out new shuffled deck
+for (int i=0;i<length;i++){
+printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]);}
+
+
+deck_instance.top_card=52;// assigns the top card of the shuffled deck
+printf("%d",deck_instance.top_card);
+printf("done with shuffle: \n \n \n");
+return 0; // 0 returned when it runs all the way thru
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+struct player {
+  struct hand* card_list;
+  char book[7];
+  size_t hand_size;
+};
+
+/* 
+ * Instance Variables: user, computer
+ * ----------------------------------
+ *
+ *  We only support 2 users: a human and a computer
+ */
+struct player user;
+struct player computer;
+
+// CALL TARGET AND NEW_CARD BEING ADDED TO DECK
+int add_card(struct player* target, struct card* new_card){
+//always starts at the top of the deck which is the start of the linked list, need to remove that node   
+int topcard=deck_instance.top_card; // make it less characters 
+// all of this is the new card
+//add_card(&user,&deck_instance); i take deck_instance in but this may be incorrect
+char s  = deck_instance.list[topcard].suit;
+char r0 = deck_instance.list[topcard].rank[0];
+char r1 = deck_instance.list[topcard].rank[1];
+// concatenate the suit and rank into a string and use
+char string[3]=strcat(s,r0,r1);// concatenate 3 char to make str to use to add to the deck
+printf("%c",string);
+
+//struct card* head=NULL;
+// create pointer called current to iterate over linked list of that player
+struct player* current=string;  // was =new_card
+// advance the current pointer to the next item in the list until the last item is reached, therefore adding card to the end of the linked list (players deck)
+if (current->next !=NULL){
+	current = current->next;
+}
+// add the new card to the end of the players list
+current->next = (player *)malloc(sizeof(player);
+current->next->new_card=new_card;
+current->next->next = NULL;
+
+// After top card put in hand, decrease the number of cards with top_card
+deck_instance.top_card=deck_instance.top_card -1; // remove the top pointer count
+
+
+
+printf("%d",deck_instance.top_card);
+printf("%d",target.card_list); // prints deck of the player?
+}// end of add card
+
+/////////////////////////////////////////////////////////////////////////////
+
+//int shuffle();
+
+/*
+ * Function: deal_player_cards
+ * ---------------------------
+ *  Deal 7 random cards to the player specified in the function.
+ *  Remove the dealt cards from the deck. 
+ *
+ *  target: pointer to the player to be dealt cards
+ *
+ *  returns: 0 if no error, and non-zero on error
+ */
+
+/// since it is now shuffled, take the top 7 cards and give them to a user
+
+//int deal_player_cards(struct player* target){
+	
+//	for(int i=1;i<=7;i++){
+	
+		//printf("total cards dealt: %d \n",i);
+//	}
+//}
+
+
+
+
+/*
+ * Function: next_card
+ * -------------------
+ *  Return a pointer to the top card on the deck.
+ *  Removes that card from the deck. 
+ *
+ *  returns: pointer to the top card on the deck.
+ */
+struct card* next_card( );
+
+/*
+ * Function: size
+ * --------------
+ *  Return the number of cards left in the current deck.
+ *
+ *  returns: number of cards left in the deck.
+ */
+size_t deck_size( );
+
+//int main(){
+//shuffle();
+//}
+
+
+#endif
