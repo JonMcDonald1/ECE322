@@ -2,7 +2,7 @@
 #define DECK_H
 
 #include <stdlib.h>
-//#include "player.h"
+#include "player.h"
 #include "card.h"
 #include <stdio.h>
 #include <time.h>
@@ -16,7 +16,6 @@ struct deck {
   int top_card;
 };
 
-//https://github.com/JonMcDonald1/ECE322/tree/master
 
 /* 
  * Variable: deck_instance
@@ -56,8 +55,8 @@ for (int i=0;i<4;i++){// all 4 suits
 			deck_instance.list[element].rank[0]=R[j];   //only 1 element used  
 		  	deck_instance.list[element].rank[1]='\0';	} //may need this line
 
-// chars use %c and \n is new line
-printf("%c%c%c \n",deck_instance.list[element].suit,deck_instance.list[element].rank[0],deck_instance.list[element].rank[1]);
+// chars use %c and \n is new line prints unshuffled deck
+//printf("%c%c%c \n",deck_instance.list[element].suit,deck_instance.list[element].rank[0],deck_instance.list[element].rank[1]);
 	element++;
 }}
 // end creating the deck
@@ -85,98 +84,21 @@ deck_instance.list[randomElement]=temp;
 //	printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]); }
 
 deck_instance.top_card=length;//52  set to use for to count
-printf("deck instance length: %d \n",deck_instance.top_card);
+//printf("deck instance length: %d \n",deck_instance.top_card);
 
 
 printf("Shuffling deck... \n \n");
 return 0; // 0 returned when it runs all the way thru
 }
 
-/////////////////////////////////////////////////////////////////////////////
 
-struct player {
-  struct hand* card_list;
-  char book[7];
-  size_t hand_size;
-};
-
-/* 
- * Instance Variables: user, computer
- * ----------------------------------
- *
- *  We only support 2 users: a human and a computer
- */
-struct player user;
-struct player computer;
-
-
-// target is a pointer to the player and new-card is a pointer to the topcard
-int add_card(struct player* target, struct card* new_card){
-//create node new_card and add this node to the end of the players deck which is a linked list of nodes
-
-if (target == NULL)
-{				//fail case
-printf("unable to allocate memory for target \n");
-	return -1;
-}
-if (new_card == NULL)
-{				//fail case
-printf("unable to allocate memory for new_card \n");
-	return -1;
-}
-printf("answer1: %c%c \n ",(*new_card).suit ,(*new_card).rank[0]   );
-printf("answer2: %c%c \n ",  new_card->suit ,  new_card->rank[0]   );
-
-// card list is pointer to head of linked list
-// looking at this players deck
-
-// current is the pointer in the hand and player is the pointer to which players deck is being used tom add to
-
-//(pointer name)-->(variable name)
-struct hand* player_deck=target->card_list;//location of players deck
-// new_item is like the head node
-struct hand* new_item=NULL; //used to create the node of the card being added
-new_item  = (struct hand*)malloc(sizeof(struct hand));
-if (new_item == NULL)
-{				//fail case
-printf("unable to allocate memory for new_item \n");
-	return -1;
-}
-
-//creates new_item node BASED ON HAND, WHICH HAS TOP AND NEXT
-new_item->top = *new_card;// sets the argument new card to a node
-new_item->next= NULL;
-
-//traverse the player_deck until there does not exist a head keep on setting the head of the player deck to the next
-// when the players deck if empty at the start of the gae, set the new_card to the top
-
-//traverse til the end of the deck, keep on changing the next location
-while (target->card_list != NULL ){	
-	target->card_list = target->card_list->next;
-} 
-// for first time adding a card, it will be the first entry, skips while loop
-if (target->card_list==NULL){
-	//sets current head of the player deck to the new card data
-	target->card_list = new_item;
-	
-	target->hand_size = target->hand_size+1; // overall count of players hand
-}
-
-// After top card put in hand, decrease the number of cards with top_card
-//printf("deck instance length:%d \n",deck_instance.top_card);
-printf("player hand size: %d \n",target->hand_size);
-deck_instance.top_card=deck_instance.top_card -1;
-}
 char printList(struct player* target){
-while (target->card_list != NULL ){	
-	printf("overall hand of player %s \n",target->card_list);	
-	target->card_list = target->card_list->next;
+	while (target->card_list != NULL ){	
+//	printf("overall hand of player %s \n",target->card_list);	
+		target->card_list = target->card_list->next;
 		
-} 
+	} 
 }
-/////////////////////////////////////////////////////////////////////////////
-
-//int shuffle();
 
 /*
  * Function: deal_player_cards
@@ -195,6 +117,7 @@ int deal_player_cards(struct player* target){
 	
 	for(int i=1;i<=7;i++){
 				add_card(target, &deck_instance.list[deck_instance.top_card-1] );
+				deck_instance.top_card=deck_instance.top_card -1;// decrement	
 		//printf("total cards dealt: %d \n",i);
 	}
 }
@@ -230,15 +153,7 @@ size_t deck_size( ){
 }
 #endif
 
-
-
-
-
-
-
-
--------------------------------------------------------------------------------------------------
-
+-----------------------------------------------------------------------------------------------------
 #include "deck.h"
 
 //#include "<stdio.h>"
@@ -261,11 +176,17 @@ int main(int args, char* argv[])
 
 
 	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	deck_instance.top_card=deck_instance.top_card -1;
 	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	deck_instance.top_card=deck_instance.top_card -1;
 	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
-	printf("users hand size: %d \n",user.hand_size);
+	deck_instance.top_card=deck_instance.top_card -1;
 	add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );
+	deck_instance.top_card=deck_instance.top_card -1;	
+	printf("\n");	
+	printf("users hand size: %d \n",user.hand_size);	
 	printf("computer hand size: %d \n",computer.hand_size);
+	printf("\n\n");
 	printList(&user);
 
 	//deal_player_cards(&user);     //works
@@ -274,3 +195,220 @@ int main(int args, char* argv[])
 	//printf("users hand size after one shuffle: %d \n",user.hand_size);
 	
 }
+--------------------------------------------------------------------------------------------------
+#ifndef PLAYER_H
+#define PLAYER_H
+
+#include <stdlib.h>
+#include <stdio.h>
+#include "card.h"
+#include "deck.h"
+
+/*
+ * Structure: player
+ * -----------------
+ *  Each player holds some number of cards in their hand
+ *  Each player can have at most 7 "books" before winning 
+ */
+struct player {
+  struct hand* card_list;
+  char book[7];
+  size_t hand_size;
+};
+
+/* 
+ * Instance Variables: user, computer
+ * ----------------------------------
+ *
+ *  We only support 2 users: a human and a computer
+ */
+struct player user;
+struct player computer;
+//  imagine 7 hands, each hand has a different card  each hand is a node with 1 card, and that hand points to the next 
+/*
+ * Function: add_card
+ * -------------------
+ *  Add a new card to the player's hand. 
+ *
+ *  target: the target player
+ *  new_card: pointer to the new card to add
+ *
+ *  returns: return 0 if no error, non-zero otherwise
+ */
+int add_card(struct player* target, struct card* new_card){
+//create node new_card and add this node to the end of the players deck which is a linked list of nodes
+
+if (target == NULL)
+{				//fail case
+printf("unable to allocate memory for target \n");
+	return -1;
+}
+if (new_card == NULL)
+{				//fail case
+printf("unable to allocate memory for new_card \n");
+	return -1;
+}
+printf("answer1: %c%c \n ",(*new_card).suit ,(*new_card).rank[0]   );
+printf("answer2: %c%c \n ",  new_card->suit ,  new_card->rank[0]   );
+
+//printf("player: %s \n ",(*target)   );
+
+// card list is pointer to head of linked list
+// looking at this players deck
+
+// current is the pointer in the hand and player is the pointer to which players deck is being used tom add to
+
+//(pointer name)-->(variable name)
+//struct hand* player_deck=target->card_list;//location of players deck
+// new_item is like the head node
+struct hand* new_item=NULL; //used to create the node of the card being added
+new_item  = (struct hand*)malloc(sizeof(struct hand));
+if (new_item == NULL)
+{				//fail case
+printf("unable to allocate memory for new_item \n");
+	return -1;
+}
+
+//creates new_item node BASED ON HAND, WHICH HAS TOP AND NEXT
+new_item->top = *new_card;// sets the argument new card to a node
+new_item->next= NULL;
+
+//traverse the player_deck until there does not exist a head keep on setting the head of the player deck to the next
+// when the players deck if empty at the start of the gae, set the new_card to the top
+
+//traverse til the end of the deck, keep on changing the next location
+while (target->card_list != NULL ){	
+	printf("inside while loop:%s\n",*target);
+	target->card_list = target->card_list->next;
+} 
+// for first time adding a card, it will be the first entry, skips while loop
+if (target->card_list==NULL){
+	//sets current head of the player deck to the new card data
+	target->card_list = new_item;
+	
+	target->hand_size = target->hand_size+1; // overall count of players hand
+}
+
+}
+
+
+
+
+/*
+ * Function: remove_card
+ * ---------------------
+ *  Remove a card from the player's hand. 
+ *
+ *  target: the target player
+ *  old_card: pointer to the old card to remove
+ *
+ *  returns: return 0 if no error, non-zero otherwise
+ */
+int remove_card(struct player* target, struct card* old_card);
+
+/*
+ * Function: check_add_book
+ * ------------------------
+ *  Check if a player has all 4 cards of the same rank.
+ *  If so, remove those cards from the hand, and add the rank to the book.
+ *  Returns after finding one matching set of 4, so should be called after adding each a new card.
+ * 
+ *  target: pointer to the player to check
+ *  
+ *  Return: a char that indicates the book that was added; return 0 if no book added.
+ */
+char check_add_book(struct player* target);
+
+/*
+ * Function: search
+ * ----------------
+ *  Search a player's hand for a requested rank.
+ *  
+ *  rank: the rank to search for
+ *  target: the player (and their hand) to search
+ *
+ *  Return: If the player has a card of that rank, return 1, else return 0
+ */
+int search(struct player* target, char rank);
+
+/*
+ * Function: transfer_cards
+ * ------------------------
+ *   Transfer cards of a given rank from the source player's 
+ *   hand to the destination player's hand. Remove transferred
+ *   cards from the source player's hand. Add transferred cards
+ *   to the destination player's hand.
+ *   
+ *   src: a pointer to the source player
+ *   dest: a pointer to the destination player
+ *   rank: the rank to transfer
+ *
+ *   Return: 0 if no cards found/transferred, <0 if error, otherwise 
+ *   return value indicates number of cards transferred
+ */   
+int transfer_cards(struct player* src, struct player* dest, char rank); 
+
+/*
+ * Function: game_over
+ * -------------------
+ *   Boolean function to check if a player has 7 books yet
+ *   and the game is over
+ *
+ *   target: the player to check
+ *   
+ *   Return: 1 if game is over, 0 if game is not over
+ */
+int game_over(struct player* target);
+// if the 7th entry char in book is full, then set the game to over
+//bool game_over=false;
+//if(target.){
+//	bool game_over=true; }
+//if (game_over==true){
+//	return -1; }
+//else{
+//	return 0;}
+
+
+/* 
+ * Function: reset_player
+ * ----------------------
+ *
+ *   Reset player by free'ing any memory of cards remaining in hand,
+ *   and re-initializes the book.  Used when playing a new game.
+ * 
+ *   target: player to reset
+ * 
+ *   Return: 0 if no error, and non-zero on error.
+ */
+int reset_player(struct player* target);
+
+/* 
+ * Function: computer_play
+ * -----------------------
+ *
+ *   Select a rank randomly to play this turn. The player must have at least
+ *   one card of the selected rank in their hand.
+ *
+ *   target: the player's hand to select from
+ *
+ *   Rank: return a valid selected rank
+ */
+char computer_play(struct player* target);
+
+/* 
+ * Function: user_play
+ * -------------------
+ *
+ *   Read standard input to get rank user wishes to play.  Must perform error
+ *   checking to make sure at least one card in the player's hand is of the 
+ *   requested rank.  If not, print out "Error - must have at least one card from rank to play"
+ *   and then re-prompt the user.
+ *
+ *   target: the player's hand to check
+ * 
+ *   returns: return a valid selected rank
+ */
+char user_play(struct player* target);
+
+#endif
+
