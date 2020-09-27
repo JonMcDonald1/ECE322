@@ -68,8 +68,7 @@ printf("%c%c%c \n",deck_instance.list[element].suit,deck_instance.list[element].
 //				  printf("%p \n",deck_instance.list[53] ); 
 
 // need to now shuffle the deck
-int length= sizeof deck_instance.list / sizeof deck_instance.list[0]; 
-//printf("deck length:%d \n",length); // 52
+int length= sizeof deck_instance.list / sizeof deck_instance.list[0]; // 52
 
 for (int i=0;i<length;i++){
 	srand ( time(NULL) );	// this creates the seed to randomize
@@ -85,7 +84,7 @@ deck_instance.list[randomElement]=temp;
 //for (int i=0;i<length;i++){
 //	printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]); }
 
-deck_instance.top_card=52;// set to use for to count
+deck_instance.top_card=length;//52  set to use for to count
 printf("deck instance length: %d \n",deck_instance.top_card);
 
 
@@ -153,16 +152,14 @@ new_item->next= NULL;
 
 //traverse til the end of the deck, keep on changing the next location
 while (target->card_list != NULL ){	
-	printf("updated player deck %s \n",target->card_list);	
 	target->card_list = target->card_list->next;
-		
 } 
 // for first time adding a card, it will be the first entry, skips while loop
 if (target->card_list==NULL){
 	//sets current head of the player deck to the new card data
 	target->card_list = new_item;
 	
-	target->hand_size = target->hand_size+1; // adds to hand
+	target->hand_size = target->hand_size+1; // overall count of players hand
 }
 
 // After top card put in hand, decrease the number of cards with top_card
@@ -170,8 +167,13 @@ if (target->card_list==NULL){
 printf("player hand size: %d \n",target->hand_size);
 deck_instance.top_card=deck_instance.top_card -1;
 }
-
-
+char printList(struct player* target){
+while (target->card_list != NULL ){	
+	printf("overall hand of player %s \n",target->card_list);	
+	target->card_list = target->card_list->next;
+		
+} 
+}
 /////////////////////////////////////////////////////////////////////////////
 
 //int shuffle();
@@ -189,13 +191,13 @@ deck_instance.top_card=deck_instance.top_card -1;
 
 /// since it is now shuffled, take the top 7 cards and give them to a user
 
-//int deal_player_cards(struct player* target){
+int deal_player_cards(struct player* target){
 	
-//	for(int i=1;i<=7;i++){
-//				add_card(target);
+	for(int i=1;i<=7;i++){
+				add_card(target, &deck_instance.list[deck_instance.top_card-1] );
 		//printf("total cards dealt: %d \n",i);
-//	}
-//}
+	}
+}
 
 
 
@@ -217,9 +219,58 @@ struct card* next_card( );
  *
  *  returns: number of cards left in the deck.
  */
-size_t deck_size( );
 
-//get the user deck size and the computer deck size and then do 52-(both) is the deck size left over.
-
-
+size_t deck_size( ){
+	int deck_size=52;// deck is always 52
+	//the user and computer hand size changes over the game
+	int subtract=user.hand_size+computer.hand_size; // user and computer size 	change over time
+	int smaller_deck=deck_size-subtract;
+	printf("smaller deck size: %d\n",smaller_deck);
+	return smaller_deck;
+}
 #endif
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------
+
+#include "deck.h"
+
+//#include "<stdio.h>"
+int main(int args, char* argv[]) 
+{
+
+ //  fprintf(stdout, "Put your code here.\n");
+
+
+	shuffle();
+	//deal_player_cards(&user);	
+	
+//for (int i=0;i<52;i++){
+//	printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]);}
+
+	// (player, card location in the deck)
+
+	//printf("deck instance top card :%d\n ",deck_instance.top_card);
+	//printf("answer outside %c%c%c \n ",deck_instance.list[deck_instance.top_card-1].suit , deck_instance.list[deck_instance.top_card-1].rank[0] ,            deck_instance.list[deck_instance.top_card-1].rank[1]);
+
+
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	printf("users hand size: %d \n",user.hand_size);
+	add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );
+	printf("computer hand size: %d \n",computer.hand_size);
+	printList(&user);
+
+	//deal_player_cards(&user);     //works
+	//deck_size();			// works
+ 						
+	//printf("users hand size after one shuffle: %d \n",user.hand_size);
+	
+}
