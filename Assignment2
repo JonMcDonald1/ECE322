@@ -15,6 +15,9 @@ struct deck {
   struct card list[52]; 
   int top_card;
 };
+
+//https://github.com/JonMcDonald1/ECE322/tree/master
+
 /* 
  * Variable: deck_instance
  * -----------------------
@@ -38,64 +41,55 @@ char R[13]={'A','2','3','4','5','6','7','8','9','1','J','Q','K'};//ranks
 char S[4]={'C','D','H','S'};	//suit		     						
 //need to append all R to each S so "CA","C2","C3"....[0],[1],[2]
 int element=0; // keeps track of elements in list
-//deck_instance.list[element]=S[i]R[J] 
+
 for (int i=0;i<4;i++){// all 4 suits
 	for (int j=0;j<13;j++) {// all 13 ranks
 // if the number 10 is drawn, it is represented as a 1 and 0 is appended	
 //struct rank[2] is 2 char long so [0] and [1] can be used		
 		deck_instance.list[element].suit=S[i]; // struct suite is 1 char
-		if (R[j]=='1'){
+	if (R[j]=='1'){
 // creates '10' kinda like deck_instance.list[counter].rank="10";
-		deck_instance.list[element].rank[0]='1';
-		deck_instance.list[element].rank[1]='0';        }
+			deck_instance.list[element].rank[0]='1';
+			deck_instance.list[element].rank[1]='0';        }
 		
 		if (R[j]!='1'){
 			deck_instance.list[element].rank[0]=R[j];   //only 1 element used  
-		  deck_instance.list[element].rank[1]='\0';	} //may need this line
+		  	deck_instance.list[element].rank[1]='\0';	} //may need this line
 
 // chars use %c and \n is new line
-	printf("%c%c%c \n",deck_instance.list[element].suit,deck_instance.list[element].rank[0],deck_instance.list[element].rank[1]);
-		element++;
+printf("%c%c%c \n",deck_instance.list[element].suit,deck_instance.list[element].rank[0],deck_instance.list[element].rank[1]);
+	element++;
 }}
 // end creating the deck
-printf("\n");
-									// need to now shuffle the deck	//
-int length= sizeof deck_instance.list / sizeof deck_instance.list[0]; 
-printf("deck length:%d \n",length); // 52
-
 
 // %p is the pointer address so these are the pointer locations
 //				printf("%p \n",deck_instance.list[0] );
 // pointer prints 'nil' when out bounds
 //				  printf("%p \n",deck_instance.list[53] ); 
 
+// need to now shuffle the deck
+int length= sizeof deck_instance.list / sizeof deck_instance.list[0]; 
+//printf("deck length:%d \n",length); // 52
 
 for (int i=0;i<length;i++){
 	srand ( time(NULL) );	// this creates the seed to randomize
 	int randomElement=rand()%(52-i); //will swap every element with another element at least once, so position [0],..[52] will get swapped with some other element once  random 
 
-// SUPPOSD TO CHANGE THE POINTER POSITION NOT THE ACTUAL DATA
-//need to swap the suit and rank seperately, use a temp 
-char	tempSuit=deck_instance.list[i].suit;
-char	tempRank0=deck_instance.list[i].rank[0];
-char	tempRank1=deck_instance.list[i].rank[1];
-
-	deck_instance.list[i].suit=deck_instance.list[randomElement].suit;
-	deck_instance.list[i].rank[0]=deck_instance.list[randomElement].rank[0];
-	deck_instance.list[i].rank[1]=deck_instance.list[randomElement].rank[1];
-	
-	deck_instance.list[randomElement].suit=tempSuit;
-	deck_instance.list[randomElement].rank[0]=tempRank0;
-	deck_instance.list[randomElement].rank[1]=tempRank1;
+struct card temp={"","",""}; // deck_instance is 3 char long so make 3 blank
+temp = deck_instance.list[i];
+deck_instance.list[i] = deck_instance.list[randomElement];
+deck_instance.list[randomElement]=temp;
 }
+
 // prints out new shuffled deck
-for (int i=0;i<length;i++){
-printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]);}
+//for (int i=0;i<length;i++){
+//	printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]); }
+
+deck_instance.top_card=52;// set to use for to count
+printf("deck instance length: %d \n",deck_instance.top_card);
 
 
-deck_instance.top_card=52;// assigns the top card of the shuffled deck
-printf("%d",deck_instance.top_card);
-printf("done with shuffle: \n \n \n");
+printf("Shuffling deck... \n \n");
 return 0; // 0 returned when it runs all the way thru
 }
 
@@ -116,39 +110,67 @@ struct player {
 struct player user;
 struct player computer;
 
-// CALL TARGET AND NEW_CARD BEING ADDED TO DECK
-int add_card(struct player* target, struct card* new_card){
-//always starts at the top of the deck which is the start of the linked list, need to remove that node   
-int topcard=deck_instance.top_card; // make it less characters 
-// all of this is the new card
-//add_card(&user,&deck_instance); i take deck_instance in but this may be incorrect
-char s  = deck_instance.list[topcard].suit;
-char r0 = deck_instance.list[topcard].rank[0];
-char r1 = deck_instance.list[topcard].rank[1];
-// concatenate the suit and rank into a string and use
-char string[3]=strcat(s,r0,r1);// concatenate 3 char to make str to use to add to the deck
-printf("%c",string);
 
-//struct card* head=NULL;
-// create pointer called current to iterate over linked list of that player
-struct player* current=string;  // was =new_card
-// advance the current pointer to the next item in the list until the last item is reached, therefore adding card to the end of the linked list (players deck)
-if (current->next !=NULL){
-	current = current->next;
+// target is a pointer to the player and new-card is a pointer to the topcard
+int add_card(struct player* target, struct card* new_card){
+//create node new_card and add this node to the end of the players deck which is a linked list of nodes
+
+if (target == NULL)
+{				//fail case
+printf("unable to allocate memory for target \n");
+	return -1;
 }
-// add the new card to the end of the players list
-current->next = (player *)malloc(sizeof(player);
-current->next->new_card=new_card;
-current->next->next = NULL;
+if (new_card == NULL)
+{				//fail case
+printf("unable to allocate memory for new_card \n");
+	return -1;
+}
+printf("answer1: %c%c \n ",(*new_card).suit ,(*new_card).rank[0]   );
+printf("answer2: %c%c \n ",  new_card->suit ,  new_card->rank[0]   );
+
+// card list is pointer to head of linked list
+// looking at this players deck
+
+// current is the pointer in the hand and player is the pointer to which players deck is being used tom add to
+
+//(pointer name)-->(variable name)
+struct hand* player_deck=target->card_list;//location of players deck
+// new_item is like the head node
+struct hand* new_item=NULL; //used to create the node of the card being added
+new_item  = (struct hand*)malloc(sizeof(struct hand));
+if (new_item == NULL)
+{				//fail case
+printf("unable to allocate memory for new_item \n");
+	return -1;
+}
+
+//creates new_item node BASED ON HAND, WHICH HAS TOP AND NEXT
+new_item->top = *new_card;// sets the argument new card to a node
+new_item->next= NULL;
+
+//traverse the player_deck until there does not exist a head keep on setting the head of the player deck to the next
+// when the players deck if empty at the start of the gae, set the new_card to the top
+
+//traverse til the end of the deck, keep on changing the next location
+while (target->card_list != NULL ){	
+	printf("updated player deck %s \n",target->card_list);	
+	target->card_list = target->card_list->next;
+		
+} 
+// for first time adding a card, it will be the first entry, skips while loop
+if (target->card_list==NULL){
+	//sets current head of the player deck to the new card data
+	target->card_list = new_item;
+	
+	target->hand_size = target->hand_size+1; // adds to hand
+}
 
 // After top card put in hand, decrease the number of cards with top_card
-deck_instance.top_card=deck_instance.top_card -1; // remove the top pointer count
+//printf("deck instance length:%d \n",deck_instance.top_card);
+printf("player hand size: %d \n",target->hand_size);
+deck_instance.top_card=deck_instance.top_card -1;
+}
 
-
-
-printf("%d",deck_instance.top_card);
-printf("%d",target.card_list); // prints deck of the player?
-}// end of add card
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -170,7 +192,7 @@ printf("%d",target.card_list); // prints deck of the player?
 //int deal_player_cards(struct player* target){
 	
 //	for(int i=1;i<=7;i++){
-	
+//				add_card(target);
 		//printf("total cards dealt: %d \n",i);
 //	}
 //}
@@ -197,9 +219,7 @@ struct card* next_card( );
  */
 size_t deck_size( );
 
-//int main(){
-//shuffle();
-//}
+//get the user deck size and the computer deck size and then do 52-(both) is the deck size left over.
 
 
 #endif
