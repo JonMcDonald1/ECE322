@@ -159,17 +159,96 @@ size_t deck_size( ){
 //#include "<stdio.h>"
 int main(int args, char* argv[]) 
 {
-
- //  fprintf(stdout, "Put your code here.\n");
-
-
 	shuffle();
-	//deal_player_cards(&user);	
+	deal_player_cards(&user);     //works
+	printDeck(&user);
+	//printDeck refers to an updated deck everytime it is called 
+	deal_player_cards(&computer); // works
+	//printDeck(&computer);
+	deck_size();			// works 52-7-7=38
+
+
+
+//rank is a an input string
+//so for every card in the targets hand make a string
+
+//while (node->card_list != NULL){     
+	//dont think its new_card
+//	char string[2]=new_card->rank[0],new_card->rank[1];         
+	//check if user input rank is equal to the string	
+//	if (rank==string){
+//	   remove_card(&user,pointer to card being removed)// take from ur deck
+//		add_card(&target,pointer to card added) // give card
+//	}
+// 	node->card_list = node->card_list->next;
+ //}
+
+// to check that the remove card works, can call remove card and then do printDeck to see that that cards pointer has been erased.
+/*
+
+	 						
+	//Enter into an endless loop until the game is over
+///*
+	while(1){
+		//user goes first
+		rank=user_play(&user); // get input from user
+		//check of the computer has any suits that match that rank
+		if(search(&computer,rank)){// if a single card from rank is found, go thru the entire deck and then remove all of them 
+		
+		// CALL THE TRANSFER CARDS FUNCTION SINCE CARDS ARE FOUND
+		// the computer is giving the user the cards that match rank
+		transfer_cards(&computer,&user,rank);
+
+		} 
+			// rank not found in other hand, go fish
+		else{
+	// take a card from the deck and give it to the user so &user
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );	
+	deck_instance.top_card=deck_instance.top_card -1;// decrement deck
+		}
+		
+		rank=user_play(&computer); // get input from computer
+		//check of the user has any suits that match that rank
+		if( search(&user,rank) ){
+		// CALL THE TRANSFER CARDS FUNCTION SINCE CARDS ARE FOUND
+		// the user is giving the computer the cards that match rank
+		transfer_cards(&user,&computer,rank);
+		}
+			// rank not found in other hand, go fish
+		else{   	
+	// take a card from the deck and give it to the computer so &computer
+	add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );	
+	deck_instance.top_card=deck_instance.top_card -1;// decrement deck
+		}
+
+
+
+		//check whether game is over
+		int prompt=0;
+		if(game_over(&user))	{
+	fprintf(stderr,"Congratulations! You beat the computer player. \n");
+		}
+			prompt=prompt_next();
+		else if(game_over(&computer)){
+	fprintf(stderr,"Sorry! You lose the game to the computer player. \n");
+			prompt=prompt_next();
+			}
+
 	
-//for (int i=0;i<52;i++){
+
+
+
+
+
+
+
+
+
+
+
+	//for (int i=0;i<52;i++){
 //	printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]);}
 
-	// (player, card location in the deck)
 
 	//printf("deck instance top card :%d\n ",deck_instance.top_card);
 	//printf("answer outside %c%c%c \n ",deck_instance.list[deck_instance.top_card-1].suit , deck_instance.list[deck_instance.top_card-1].rank[0] ,            deck_instance.list[deck_instance.top_card-1].rank[1]);
@@ -189,47 +268,16 @@ int main(int args, char* argv[])
 			
 	printf("\n\n");
 
-	//printList(&user);
-	printf("hey\n");
+	printDeck(&user);
 	printf("\n");
-	
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	deck_instance.top_card=deck_instance.top_card -1;
+	printf("\n");
+	printDeck(&user);
 
-	//deal_player_cards(&user);     //works
-	//deal_player_cards(&computer);
-	//deck_size();			// works
-	 						
-	//Enter into an endless loop until the game is over
 
-	while(1){
-		//user goes first
-		rank=user_play(&user);
-		//check of the computer has the same rank or not
-		if(//your code of search the computer ){
-		// code of adding into your hand
-		}
-		else{
-			// code of getting the card from the deck
-		}
-		
-		rank=user_play(&computer);
-		//check of the computer has the same rank or not
-		if(//your code of search the user ){
-		// code of adding into your hand
-		}
-		else{
-			// code of getting the card from the deck
-		}
-		//check whether game is over
-		int prompt=0;
-		if(game_over(&user))	{
-			fprintf(stderr,"Congratulations! You beat the computer player. \n");
-		}
-			prompt=prompt_next();
-		else if(game_over(&computer)){
-			fprintf(stderr,"Sorry! You lose the game to the computer player. \n");
-			prompt=prompt_next();
-			}
 
+*/
 }
 --------------------------------------------------------------------------------------------------
 #ifndef PLAYER_H
