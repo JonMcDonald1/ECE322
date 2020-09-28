@@ -325,7 +325,7 @@ struct player computer;
 //printf("answer: %c%c%c \n ",(*new_card).suit ,(*new_card).rank[0],(*new_card).rank[1]   );
 //printf("card added: %c%c%c \n ",  new_card->suit ,  new_card->rank[0],new_card->rank[1]   );
 
-int add_card(struct player* target, struct card* new_card){
+int  (struct player* target, struct card* new_card){
 //create node new_card and add this node to the end of the players deck which is a linked list of nodes
 
 if (target == NULL || new_card==NULL)
@@ -385,7 +385,7 @@ int remove_card(struct player* target, struct card* old_card){
 struct hand* head = target->card_list;
 struct hand* remove = old_card;
 
-int *reset = target->card_list;
+int *reset = target->card_list;    
 
 //base case: One of inputs is null, code error
 if (head == NULL || remove == NULL){
@@ -425,6 +425,22 @@ target->card_list=reset;
 free(remove);
 return;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
  * Function: check_add_book
  * ------------------------
@@ -440,7 +456,7 @@ return;
 char check_add_book(struct player* target){
 	//10 is not included, seperate case
 	char R[12]={'A','2','3','4','5','6','7','8','9','J','Q','K'};
-	//char string[2]=new_card->rank[0], new_card->rank[1];
+
 	char counter = 0;
 
 for (int i=0;i<12;i++){		//iterate every case except 10
@@ -513,7 +529,25 @@ if (ten == 4){
  *
  *  Return: If the player has a card of that rank, return 1, else return 0
  */
-int search(struct player* target, char rank);
+//search(&computer,rank);
+int search(struct player* target, char rank){
+char R[12]={'A','2','3','4','5','6','7','8','9','J','Q','K'};
+bool check=false;
+while (target->card_list != NULL){
+		for (int i=0; i<12;i++){
+			if (rank==R[i]){check=true;}		
+		}
+	          	
+		if (rank=="10"){check=true;}
+	//traverse card_list in targets deck
+	target->card_list=target->card_list->next;
+}//end while
+if (check==true){return 1;}
+if (check==false){return 0;}
+// if none of the if statements returned 1, then it returns 0
+}// end search
+
+
 
 /*
  * Function: transfer_cards
@@ -530,7 +564,38 @@ int search(struct player* target, char rank);
  *   Return: 0 if no cards found/transferred, <0 if error, otherwise 
  *   return value indicates number of cards transferred
  */   
-int transfer_cards(struct player* src, struct player* dest, char rank); 
+int transfer_cards(struct player* src, struct player* dest, char rank){
+// 2 pointers for the players hands
+struct hand* recieving_card=dest->card_list;// the destination recieves
+struct hand* losing_card=src->card_list;  // the source is giving their card
+
+if (rank=="10"){
+rank=="1"; //set rank to 1 because 10 is 2 characters
+}
+
+rank1="C"rank;
+rank2="D"rank;
+rank3="H"rank;
+rank4="S"rank;
+// go thru source deck to remove the card being asked for an
+while (src->card_list != NULL){
+		//checks if the rank transfering is equal to any cards in the deck, if so remove it and 
+// checks to see if any 4suits are in the hand of the source
+	// src->card_list is the entire name of the card so S8 
+	if (rank1 || rank2 || rank3 || rank4 ==src->card_list){
+		
+		//-> top is the location of the node that is being altered
+		remove_card(&src,&src->card_list->top);		
+		add_card(&dest,&dest->card_list->top);
+			}		
+		}
+	//go to next node in SOURCE HAND to check for rest 
+	src->card_list=src->card_list->next;
+
+} 
+
+
+
 
 /*
  * Function: game_over
@@ -595,4 +660,6 @@ char computer_play(struct player* target);
 char user_play(struct player* target);
 
 #endif
+
+
 
