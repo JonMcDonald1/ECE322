@@ -155,7 +155,7 @@ size_t deck_size( ){
 
 -----------------------------------------------------------------------------------------------------
 #include "deck.h"
-
+#include "player.h"
 //#include "<stdio.h>"
 int main(int args, char* argv[]) 
 {
@@ -181,19 +181,55 @@ int main(int args, char* argv[])
 	deck_instance.top_card=deck_instance.top_card -1;
 	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
 	deck_instance.top_card=deck_instance.top_card -1;
-	add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );
-	deck_instance.top_card=deck_instance.top_card -1;	
 	printf("\n");	
-	printf("users hand size: %d \n",user.hand_size);	
-	printf("computer hand size: %d \n",computer.hand_size);
+	printf("users hand size: %d \n",user.hand_size);
+	//add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );
+	//deck_instance.top_card=deck_instance.top_card -1;	
+	//printf("computer hand size: %d \n",computer.hand_size);	
+			
 	printf("\n\n");
-	printList(&user);
+
+	//printList(&user);
+	printf("hey\n");
+	printf("\n");
+	
 
 	//deal_player_cards(&user);     //works
+	//deal_player_cards(&computer);
 	//deck_size();			// works
- 						
-	//printf("users hand size after one shuffle: %d \n",user.hand_size);
-	
+	 						
+	//Enter into an endless loop until the game is over
+
+	while(1){
+		//user goes first
+		rank=user_play(&user);
+		//check of the computer has the same rank or not
+		if(//your code of search the computer ){
+		// code of adding into your hand
+		}
+		else{
+			// code of getting the card from the deck
+		}
+		
+		rank=user_play(&computer);
+		//check of the computer has the same rank or not
+		if(//your code of search the user ){
+		// code of adding into your hand
+		}
+		else{
+			// code of getting the card from the deck
+		}
+		//check whether game is over
+		int prompt=0;
+		if(game_over(&user))	{
+			fprintf(stderr,"Congratulations! You beat the computer player. \n");
+		}
+			prompt=prompt_next();
+		else if(game_over(&computer)){
+			fprintf(stderr,"Sorry! You lose the game to the computer player. \n");
+			prompt=prompt_next();
+			}
+
 }
 --------------------------------------------------------------------------------------------------
 #ifndef PLAYER_H
