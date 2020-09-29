@@ -193,7 +193,7 @@ struct player {
   struct hand* card_list;
   char book[7];
   size_t hand_size;
-  size_t book_size;// created to increment
+  size_t book_size;// created to keep track of books to win
 };
 
 /* 
@@ -276,7 +276,7 @@ return 0; // no error
  *
  *  returns: return 0 if no error, non-zero otherwise
  */
-/*
+
 int remove_card(struct player* target, struct card* old_card){
 //make structs
 struct hand* head = target->card_list;
@@ -324,7 +324,7 @@ free(remove);
 return;
 }
 
-*/
+
 
 /*
  * Function: check_add_book
@@ -419,7 +419,7 @@ if (ten == 4){
 		//search(&computer,rank);
 int search(struct player* target,char rank){
 //points to the hand 
-struct hand *reset=target->card_list;        //set temp pointer to start
+struct hand *reset=target->card_list;      //set temp pointer to start search
 //traverse list,
 //char rank[2]=rank
 // only looks for 1 character
@@ -450,8 +450,6 @@ if(found==false){
 //	printf("No match found");	
 	return 0;}
 
-
-
 }// end search
 
 
@@ -476,35 +474,25 @@ int transfer_cards(struct player* src, struct player* dest, char rank){
 // 2 pointers for the players hands
 struct hand* recieving_card=dest->card_list;// the destination recieves
 struct hand* losing_card=src->card_list;  // the source is giving their card
-char suit1='C';
-strcat(suit1,rank); //CA,C2,C3..C10..CQ
 
-char suit2='D';
-strcat(suit2,rank);//DA,D2,D3..D10..DQ
+char check[2];
+check[0]=rank;
+check[1]='\0';
 
-char suit3='H';
-strcat(suit3,rank);//HA,H2,H3..H10..HQ
-
-char suit4='S';
-strcat(suit4,rank);//SA,S2,s3..S10..SQ
 // go thru source deck to remove the card being asked for an
-while (src->card_list != NULL){
-	
-//printf("%s",src->card_list) points to the entire string at that head
-// checks to see if any 4suits are in the hand of the source
-//if C2=D2 or H2=D2 or S2=D2 or D2=D2 , since 1 of them is true, remove that pointer and add it to the other deck 
-	if (suit1 || suit2 || suit3 || suit4 ==src->card_list){
-		
-		//-> top is the location of the node that is being altered
+while (losing_card != NULL){
+// if rank you ask for is this card, remove it from them and add it other		
+	if(strcmp(losing_card->top.rank,check)==0){	
 		remove_card(&src,&src->card_list->top);		
 		add_card(&dest,&dest->card_list->top);
-			}		
-		}
-	//go to next node in SOURCE HAND to check for rest 
-	src->card_list=src->card_list->next;
+	}
+	losing_card=losing_card->next; // iterate to the next card to check
+}// end while
+} //end transfer cards
 
-} 
 */
+
+
 
 /*
  * Function: game_over
@@ -564,11 +552,11 @@ struct comp_helper
 };
 struct comp_helper comp;
 
-
+//***************************DONE********************************
 char computer_play(struct player* target){
 // so there are 13 possible ranks to choose from
 // create a list of the 13 ranks, shuffle it, and then go down the list and select rank and if it does not exist in the user hand then go to the next rank in the random shuffled list 
-//USE THE SHUFFLE CODE TO MAKE A NON SHUFFLED LIST OF RANKS, THEN SHUFFLE IT, THEN SEARCH FIRST ELEMENT WITH SEARCH AND THEN CH
+//USE THE CARD.H CODE TO MAKE A NON SHUFFLED LIST OF RANKS, THEN SHUFFLE IT, THEN SEARCH FIRST ELEMENT WITH SEARCH AND THEN ITERATE UNTIL A RANK IS PRESENT IN THE DECK OF THE USER
 
 char R[13]={'A','2','3','4','5','6','7','8','9','1','J','Q','K'};
 // fill the list
@@ -587,14 +575,12 @@ for (int i=0;i<length;i++){
 	comp.list[randomElement]=temp;
 }
 //prints new shuffled order
-
-printf("\n\n the new shuffled order is \n");
+printf("the new shuffled order is \n");
 for (int i=0;i<13;i++) {
 	printf("%c  ",comp.list[i]);
 }
 printf("\n");
-printf("%c  ",comp.list[0]);
-printf("\n");
+printf("the first card checked is; %c \n",comp.list[0]);
 //char rank=comp.list[0].rank; // set first random rank pick
 
 //printf("the first rank being check by computer is: %c\n",rank);
@@ -602,19 +588,18 @@ int i=0;
 printDeck(&computer);
 printDeck(&user);
 
-char rank=comp.list[i].rank; // goes to next in list if not foun
+// COMP.LIST[I].RANK IS A SHUFFLED LIST OF ALL THE RANKS
 
-while(search(&user,rank)==0){
+while(search(&user,comp.list[i].rank)==0){
 	printf("Error - must have at least one card from rank to play \n");
-	//printf("Player 2's turn, enter a Rank: ");
-	i++;//increment
-	char rank=comp.list[i].rank;
+	//printf("Player 2's turn, enter a Rank: "); // isnt shown in game
+	i++;//increment and continue to check ranks
 }
-printf("the legal rank is :%c\n",rank);// should always be in the deck of the user without fail
 
- // returns one of ranks->A,2,3.6..Q,K
-//printf("legal rank inside user_play is: %c\n",rank);
-//return rank; // returns valid selected rank
+// should always be in the deck of the user without fail
+printf("the legal rank the computer asked for is :%c\n",comp.list[i].rank);
+
+return comp.list[i].rank; // returns valid selected rank
 }
 /* 
  * Function: user_play
@@ -659,6 +644,8 @@ return rank; // returns valid selected rank
 
 
 #endif
+
+
 
 
 
