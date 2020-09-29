@@ -73,7 +73,8 @@ for (int i=0;i<length;i++){
 	srand ( time(NULL) );	// this creates the seed to randomize
 	int randomElement=rand()%(52-i); //will swap every element with another element at least once, so position [0],..[52] will get swapped with some other element once  random 
 
-struct card temp={"","",""}; // deck_instance is 3 char long so make 3 blank
+struct card temp; // deck_instance is 3 char long so make 3 blank
+//struct card temp={"","",""};
 temp = deck_instance.list[i];
 deck_instance.list[i] = deck_instance.list[randomElement];
 deck_instance.list[randomElement]=temp;
@@ -170,9 +171,9 @@ printf("Player 2's Hand - ");
 
 #endif
 
+
+
 -----------------------------------------------------------------------------------------------
-
-
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -181,6 +182,7 @@ printf("Player 2's Hand - ");
 #include "card.h"
 #include "deck.h"
 #include <stdbool.h>
+#include <string.h>
 /*
  * Structure: player
  * -----------------
@@ -259,7 +261,8 @@ else{
 	}
 target->hand_size = target->hand_size+1;// increment hand size
 // may need to take out deck_instance.top since you can add card to other hands
-return head;
+//return head;
+return 0; // no error
 }
 
 
@@ -273,6 +276,7 @@ return head;
  *
  *  returns: return 0 if no error, non-zero otherwise
  */
+/*
 int remove_card(struct player* target, struct card* old_card){
 //make structs
 struct hand* head = target->card_list;
@@ -319,6 +323,8 @@ target->card_list=reset;
 free(remove);
 return;
 }
+
+*/
 
 /*
  * Function: check_add_book
@@ -409,23 +415,155 @@ if (ten == 4){
  *
  *  Return: If the player has a card of that rank, return 1, else return 0
  */
+//*************************DONE********************************************
 		//search(&computer,rank);
-int search(struct player* target, char rank){
-char R[12]={'A','2','3','4','5','6','7','8','9','J','Q','K'};
-bool check;
+int search(struct player* target, char*rank){
+
+int *reset=target->card_list;        //set temp pointer to start
+
+//printf("looking for ranks %s\n ",rank);// RANK IS A STRING CHAR AND IT ONLY INPUTS THE 1st CHAR SO NEED TO CHECK IF RANK=1 INSTEAD OF 10
+
+//use strcmp to see if rank="1" which is really 10
+char ten[100]="1";
+//printf("ten: %s",ten);
+
+if (strcmp(rank,ten)==0){  // check is the string of rank and ten are both 1
+	//printf("the rank was 10!\n");
+	char suit1[100];
+	strcpy(suit1,"C");	// creates C10
+	strcat(suit1,rank);
+	strcat(suit1,"0");
+//	printf("%s\n",suit1);
+
+	char suit2[100];
+	strcpy(suit2,"D");
+	strcat(suit2,rank);	// creates D10
+	strcat(suit2,"0");
+//	printf("%s\n",suit2);
+
+	char suit3[100];
+	strcpy(suit3,"H");	// creates H10
+	strcat(suit3,rank);
+	strcat(suit3,"0");
+//	printf("%s\n",suit3);
+
+	char suit4[100];
+	strcpy(suit4,"S");
+	strcat(suit4,rank);	// creates S10
+	strcat(suit4,"0");
+//	printf("%s\n",suit4);
+
+	int count=0;
+	bool check=false;
+
+	while (target->card_list != NULL){
+
+//suit#==target->card_list
+//strcmp is 0 when the strings are identical.so checks if this happens
+if(strcmp(suit1,target->card_list)==0){
+	printf("%s matched with %s \n",suit1,target->card_list);
+	check=true;}
+if(strcmp(suit2,target->card_list)==0){
+	printf("%s matched with %s \n",suit2,target->card_list);
+	check=true;}
+if(strcmp(suit3,target->card_list)==0){
+	printf("%s matched with %s \n",suit3,target->card_list);
+	check=true;}
+if(strcmp(suit4,target->card_list)==0){
+	printf("%s matched with %s \n",suit4,target->card_list);
+	check=true;}
+
+//	printf("%s did not match with %s\n",suit1,target->card_list);
+//	printf("%s did not match with %s\n",suit2,target->card_list);
+//	printf("%s did not match with %s\n",suit3,target->card_list);
+//	printf("%s did not match with %s\n",suit4,target->card_list);
+//	count++;
+//	printf("card count: %d \n",count); // make sure runs thru 7 cards
+	target->card_list=target->card_list->next; // iterate to nextcard
+}// end while loop
+
+target->card_list=reset;//reset deck so if the error occurs, then it can start from the begging again.
+if (check==true){
+//	printf("match\n");
+	return 1;}
+if (check==false){
+//	printf("fail\n");
+	return 0;}
+
+
+} // end if
+
+
+
+else{
+// CASE WHEN RANK IS NOT 10
+
+char suit1[100];
+strcpy(suit1,"C");// creates 1 string 
+strcat(suit1,rank);// combine the suit and rank string
+//printf("%s\n",suit1);
+
+char suit2[100];
+strcpy(suit2,"D");/// each one of these combines the suit char with the rank
+strcat(suit2,rank);	// so it creates C5,D5,H5,S5 if rank input=5
+//printf("%s\n",suit2);
+
+char suit3[100];
+strcpy(suit3,"H");
+strcat(suit3,rank);
+//printf("%s\n",suit3);
+
+char suit4[100];
+strcpy(suit4,"S");
+strcat(suit4,rank);
+//printf("%s\n",suit4);
+
+int count=0;
+bool check=false;
+//checks if any of those 4 ranks are in the deck, if so , return 1
+
 while (target->card_list != NULL){
-		for (int i=0; i<12;i++){
-			if (rank==R[i]){check=true;}		
-		}
-	          	
-		if (rank=="10"){check=true;}
-	//traverse card_list in targets deck
+
+//suit#==target->card_list
+//strcmp is 0 when the strings are identical.so checks if this happens
+if(strcmp(suit1,target->card_list)==0){
+//	printf("%s matched with %s \n",suit1,target->card_list);
+	check=true;}
+if(strcmp(suit2,target->card_list)==0){
+//	printf("%s matched with %s \n",suit2,target->card_list);
+	check=true;}
+if(strcmp(suit3,target->card_list)==0){
+//	printf("%s matched with %s \n",suit3,target->card_list);
+	check=true;}
+if(strcmp(suit4,target->card_list)==0){
+//	printf("%s matched with %s \n",suit4,target->card_list);
+	check=true;}
+
+//	printf("%s did not match with %s\n",suit1,target->card_list);
+//	printf("%s did not match with %s\n",suit2,target->card_list);
+//	printf("%s did not match with %s\n",suit3,target->card_list);
+//	printf("%s did not match with %s\n",suit4,target->card_list);
+//	count++;
+//	printf("card count: %d \n",count); // make sure runs thru 7 cards
 	target->card_list=target->card_list->next;
-}//end while
-if (check==true){return 1;}
-if (check==false){return 0;}
+}// end while loop
+
+target->card_list=reset;//reset deck so if the error occurs, then it can start from the begging again.
+if (check==true){
+//	printf("match\n");
+	return 1;}
+if (check==false){
+//	printf("fail\n");
+	return 0;}
+
 // if none of the if statements returned 1, then it returns 0
+
+} //end else
+
+
+
 }// end search
+
 
 
 
@@ -444,6 +582,8 @@ if (check==false){return 0;}
  *   Return: 0 if no cards found/transferred, <0 if error, otherwise 
  *   return value indicates number of cards transferred
  */   
+
+/*
 int transfer_cards(struct player* src, struct player* dest, char rank){
 // 2 pointers for the players hands
 struct hand* recieving_card=dest->card_list;// the destination recieves
@@ -476,6 +616,7 @@ while (src->card_list != NULL){
 	src->card_list=src->card_list->next;
 
 } 
+*/
 
 /*
  * Function: game_over
@@ -522,7 +663,31 @@ int reset_player(struct player* target);
  *
  *   Rank: return a valid selected rank
  */
-char computer_play(struct player* target);
+char computer_play(struct player* target){
+// so there are 13 possible ranks to choose from
+// create a list of the 13 ranks, shuffle it, and then go down the list and select rank and if it does not exist in the user hand then go to the next rank in the random shuffled list 
+//USE THE SHUFFLE CODE TO MAKE A NON SHUFFLED LIST OF RANKS, THEN SHUFFLE IT, THEN SEARCH FIRST ELEMENT WITH SEARCH AND THEN CH
+
+// i think a struct may be easier idk
+
+//comp_list = list[13];
+//for(int i=0;i<13;i++){
+//comp_list[i]=
+}
+
+
+
+while(search(&computer,rank[i])==0){
+	printf("Error - must have at least one card from rank to play \n");
+	printf("Player 1's turn, enter a Rank: ");
+	i++;
+}
+
+ // returns one of ranks->A,2,3.6..Q,K
+printf("legal rank inside user_play is: %c\n",*rank);
+return *rank; // returns valid selected rank
+
+}
 
 /* 
  * Function: user_play
@@ -536,24 +701,37 @@ char computer_play(struct player* target);
  *   target: the player's hand to check
  * 
  *   returns: return a valid selected rank
- */   //takes in &user only
+ */   
+
+
+
+
+///***************************DONE********************************
 char user_play(struct player* target){
-printf("Player 1's turn, enter a Rank:");
 
-char rank=getchar();
-
-//if rank is not in the deck. print an error,and 
-//skips over if card not in deck
-if (search(&user,rank) ==0){
-printf("Error - must have at least one card from rank to play");
- user_play(&user);
+//so scanf will only take the first value, so when 10, check if rank=1 because it sets it as 1  and then concatenate the 0 to end if 1
+char rank[20];
+printf("Player 1's turn, enter a Rank: ");
+scanf("%c",rank);
+// keeps on running if it fails, because failing is not an option!
+//==0 is the fail case for not finding anything in search function
+//use search function to see if the input is legal
+while(search(&computer,rank)==0){
+	printf("Error - must have at least one card from rank to play \n");
+	printf("Player 1's turn, enter a Rank: ");
+	scanf(" %c",rank); //waits for input the space eliminates 2x printing
 }
 
+ // returns one of ranks->A,2,3.6..Q,K
+printf("legal rank inside user_play is: %c\n",*rank);
+return *rank; // returns valid selected rank
 }
+
 
 #endif
+----------------------------------------------------------------------------------------
 
-----------------------------------------------------------------------------------------------------
+
 
 
 #include "deck.h"
@@ -566,35 +744,38 @@ int main(int args, char* argv[])
 	printDeck(&user);
 	//printDeck refers to an updated deck everytime it is called 
 	deal_player_cards(&computer); // works
-	//printDeck(&computer);
-	deck_size();			// works 52-7-7=38
-		 					
+	printDeck(&computer);		//works
+	//deck_size();			// works 52-7-7=38
+	//search(&computer,rank); // return value searching works 100%
+	
+	char rank;	 					
 	
 	//Enter into an endless loop until the game is over
 //	while(1){
 		//user goes first
-		char rank=user_play(&user); // get input from user
-		//check of the computer has any suits that match that rank
-		if(search(&computer,rank)){// if a single card from rank is found, go thru the entire deck and then remove all of them 
-		
+		rank=user_play(&user); // get input from user works 100% with 10!
+		printf("the legal rank is: %s\n",&rank); //rank outside use &
+
+		//if(search(&computer,rank)){// if a single card from rank is found, go thru the entire deck and then remove all of them 
+		//printf("the search worked\n");
 		// CALL THE TRANSFER CARDS FUNCTION SINCE CARDS ARE FOUND
 		// the computer is giving the user the cards that match rank
-		transfer_cards(&computer,&user,rank);
+		//transfer_cards(&computer,&user,rank);
 
-		} 
+//		} 
 			// rank not found in other hand, go fish
-		else{
+//		else{
 	// take a card from the deck and give it to the user so &user
-add_card(&user, &deck_instance.list[deck_instance.top_card-1] );	
-	deck_instance.top_card=deck_instance.top_card -1;// decrement deck
-		}
+//add_card(&user, &deck_instance.list[deck_instance.top_card-1] );	
+//	deck_instance.top_card=deck_instance.top_card -1;// decrement deck
+//		}
 //-----------------------------------------------------------
 /*
 
 		
 
 
-		rank=user_play(&computer); // get input from computer
+		rank=computer_play(&computer); // get input from computer
 		//check of the user has any suits that match that rank
 		if( search(&user,rank) ){
 		// CALL THE TRANSFER CARDS FUNCTION SINCE CARDS ARE FOUND
@@ -666,6 +847,7 @@ fprintf(stderr,"Sorry! You lose the game to the computer player. \n");
 
 */
 }
+
 
 
 
