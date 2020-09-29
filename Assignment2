@@ -424,14 +424,16 @@ struct hand *reset=target->card_list;        //set temp pointer to start
 //char rank[2]=rank
 // only looks for 1 character
 // goes thru the hand and checks the rank of the card with the input rank
+// this code is done to turn the rank into a string, so strcmp can be used 
 char check[2];
 check[0]=rank;
 check[1]='\0';
-printf("create string with rank %s\n",check);
+//printf("create string with rank %s\n",check);
+
 bool found=false;
 while (reset != NULL){
 // rank is a char while top.rank is a string
-	printf("%s\n",reset->top.rank);
+//	printf("%s\n",reset->top.rank);
 		if(strcmp(reset->top.rank,check)==0){	
 			found=true;
 		}
@@ -441,11 +443,11 @@ while (reset != NULL){
 
 //target->card_list = reset;
 if (found==true){
-	printf("Search found");
+//	printf("Search found");
 	return 1;
 }
 if(found==false){
-	printf("No match found");	
+//	printf("No match found");	
 	return 0;}
 
 
@@ -572,13 +574,13 @@ char R[13]={'A','2','3','4','5','6','7','8','9','1','J','Q','K'};
 // fill the list
 for (int i=0;i<13;i++) {
 	comp.list[i].rank=R[i];
-	printf("%c \n",comp.list[i]);
+//	printf("%c \n",comp.list[i]);
 }
 // shuffle the list so it chooses rng
 int length= sizeof comp.list / sizeof comp.list[0]; // 13
 for (int i=0;i<length;i++){
 	//srand ( time(NULL) );	// this creates the seed to randomize
-	int randomElement=rand()%(length+1-i); //will swap every element once
+	int randomElement=rand()%(1+length-i); //will swap every element once
 	struct comp_rank temp;
 	temp = comp.list[i];
 	comp.list[i] = comp.list[randomElement];
@@ -599,24 +601,19 @@ printf("\n");
 int i=0;
 printDeck(&computer);
 printDeck(&user);
-// works
-//if(search(&user,"K")){
-//	printf("match\n");}
 
-//if(search(&user,*comp.list[0])){
-//	printf("match\n");
-//}
+char rank=comp.list[i].rank; // goes to next in list if not foun
 
-
-//while(search(&user,"K")==0){
-//	printf("Error - must have at least one card from rank to play \n");
-//	printf("Player 2's turn, enter a Rank: ");
-//	i++;//increment
-//	char rank=comp.list[i].rank; // goes to next in list if not found
-//}
+while(search(&user,rank)==0){
+	printf("Error - must have at least one card from rank to play \n");
+	//printf("Player 2's turn, enter a Rank: ");
+	i++;//increment
+	char rank=comp.list[i].rank;
+}
+printf("the legal rank is :%c\n",rank);// should always be in the deck of the user without fail
 
  // returns one of ranks->A,2,3.6..Q,K
-//printf("legal rank inside user_play is: %c\n",*rank);
+//printf("legal rank inside user_play is: %c\n",rank);
 //return rank; // returns valid selected rank
 }
 /* 
@@ -639,29 +636,31 @@ char user_play(struct player* target){
 //so scanf will only take the first value, so when 10, check if rank=1 because it sets it as 1  and then concatenate the 0 to end if 1
 char rank;
 printf("Player 1's turn, enter a Rank: ");
-scanf(" %c",&rank);
+scanf(" %c",&rank);// has to have empty in front of %c and & in front of rank
 // keeps on running if it fails, because failing is not an option!
 //==0 is the fail case for not finding anything in search function
-//use search function to see if the input is legal
+
 
 //if(search(&computer,rank)){printf("matching\n");}
 //else{printf("fail\n");}
 
-search(&computer,rank);
-/*
+//search(&computer,rank); // used to check
+//use search function to see if the input is legal, if not then print error and try again
 while(search(&computer,rank)==0){
 	printf("Error - must have at least one card from rank to play \n");
 	printf("Player 1's turn, enter a Rank: ");
-	scanf(" %c",rank); //waits for input the space eliminates 2x printing
+	scanf(" %c",&rank); //waits for input the space eliminates 2x printing
 }
-*/
+
  // returns one of ranks->A,2,3.6..Q,K
-printf("legal rank inside user_play is: %c\n",rank);
+//printf("legal rank inside user_play is: %c\n",rank);
 return rank; // returns valid selected rank
 }
 
 
 #endif
+
+
 
 
 ----------------------------------------------------------------------------------------
