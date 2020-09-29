@@ -17,6 +17,7 @@ struct deck {
 };
 
 
+
 /* 
  * Variable: deck_instance
  * -----------------------
@@ -32,7 +33,6 @@ struct deck deck_instance;  // this is deck_instance of type deck
  * 
  *  returns: 0 if no error, and non-zero on error
 
-takes in the array deck_instance and the length of the card list
  */
 
 int shuffle(){
@@ -91,15 +91,6 @@ printf("Shuffling deck... \n \n");
 return 0; // 0 returned when it runs all the way thru
 }
 
-
-char printList(struct player* target){
-	while (target->card_list != NULL ){	
-//	printf("overall hand of player %s \n",target->card_list);	
-		target->card_list = target->card_list->next;
-		
-	} 
-}
-
 /*
  * Function: deal_player_cards
  * ---------------------------
@@ -114,16 +105,11 @@ char printList(struct player* target){
 /// since it is now shuffled, take the top 7 cards and give them to a user
 
 int deal_player_cards(struct player* target){
-	
 	for(int i=1;i<=7;i++){
-				add_card(target, &deck_instance.list[deck_instance.top_card-1] );
-				deck_instance.top_card=deck_instance.top_card -1;// decrement	
-		//printf("total cards dealt: %d \n",i);
+				add_card(target, &deck_instance.list[deck_instance.top_card-1] );	
+				deck_instance.top_card=deck_instance.top_card -1;// decrement deck size	because taking cards from DECK
 	}
 }
-
-
-
 
 /*
  * Function: next_card
@@ -133,9 +119,16 @@ int deal_player_cards(struct player* target){
  *
  *  returns: pointer to the top card on the deck.
  */
-struct card* next_card( );
+struct card* next_card( ){
+	int top=deck_instance.top_card-1;
+	//int next_card_pointer=&deck_instance.list[top]; //& symbol returns adress of the top card
+	//free(&deck_instance.list[top])	;
 
-/*
+//delete next_card_pointer;// free memory by deleting adress
+	//next_card_pointer=NULL;// point dangling pointer to null
+	//return next_card_pointer;
+}
+/* 
  * Function: size
  * --------------
  *  Return the number of cards left in the current deck.
@@ -151,135 +144,35 @@ size_t deck_size( ){
 	printf("smaller deck size: %d\n",smaller_deck);
 	return smaller_deck;
 }
+
+/// EXTRA FUNCTION CREATED TO PRINT THE PLAYERS DECK
+void printDeck(struct player* node){
+		//keep count of turns
+	if (node==&user){
+printf("Player 1's Hand - ");
+}
+if (node==&computer){
+printf("Player 2's Hand - ");
+}
+		//original hand		
+		int *reset=node->card_list;        //set temp pointer to start 
+		while (node->card_list != NULL){
+                printf("%s ", node->card_list);
+                node->card_list = node->card_list->next;
+ 		}
+		//reset the hand to the beggining node using temp
+		printf("\n");		
+		node->card_list=reset;
+		
+}
+
+
+
 #endif
 
------------------------------------------------------------------------------------------------------
-#include "deck.h"
-#include "player.h"
-//#include "<stdio.h>"
-int main(int args, char* argv[]) 
-{
-	shuffle();
-	deal_player_cards(&user);     //works
-	printDeck(&user);
-	//printDeck refers to an updated deck everytime it is called 
-	deal_player_cards(&computer); // works
-	//printDeck(&computer);
-	deck_size();			// works 52-7-7=38
+-----------------------------------------------------------------------------------------------
 
 
-
-//rank is a an input string
-//so for every card in the targets hand make a string
-
-//while (node->card_list != NULL){     
-	//dont think its new_card
-//	char string[2]=new_card->rank[0],new_card->rank[1];         
-	//check if user input rank is equal to the string	
-//	if (rank==string){
-//	   remove_card(&user,pointer to card being removed)// take from ur deck
-//		add_card(&target,pointer to card added) // give card
-//	}
-// 	node->card_list = node->card_list->next;
- //}
-
-// to check that the remove card works, can call remove card and then do printDeck to see that that cards pointer has been erased.
-/*
-
-	 						
-	//Enter into an endless loop until the game is over
-///*
-	while(1){
-		//user goes first
-		rank=user_play(&user); // get input from user
-		//check of the computer has any suits that match that rank
-		if(search(&computer,rank)){// if a single card from rank is found, go thru the entire deck and then remove all of them 
-		
-		// CALL THE TRANSFER CARDS FUNCTION SINCE CARDS ARE FOUND
-		// the computer is giving the user the cards that match rank
-		transfer_cards(&computer,&user,rank);
-
-		} 
-			// rank not found in other hand, go fish
-		else{
-	// take a card from the deck and give it to the user so &user
-	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );	
-	deck_instance.top_card=deck_instance.top_card -1;// decrement deck
-		}
-		
-		rank=user_play(&computer); // get input from computer
-		//check of the user has any suits that match that rank
-		if( search(&user,rank) ){
-		// CALL THE TRANSFER CARDS FUNCTION SINCE CARDS ARE FOUND
-		// the user is giving the computer the cards that match rank
-		transfer_cards(&user,&computer,rank);
-		}
-			// rank not found in other hand, go fish
-		else{   	
-	// take a card from the deck and give it to the computer so &computer
-	add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );	
-	deck_instance.top_card=deck_instance.top_card -1;// decrement deck
-		}
-
-
-
-		//check whether game is over
-		int prompt=0;
-		if(game_over(&user))	{
-	fprintf(stderr,"Congratulations! You beat the computer player. \n");
-		}
-			prompt=prompt_next();
-		else if(game_over(&computer)){
-	fprintf(stderr,"Sorry! You lose the game to the computer player. \n");
-			prompt=prompt_next();
-			}
-
-	
-
-
-
-
-
-
-
-
-
-
-
-	//for (int i=0;i<52;i++){
-//	printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]);}
-
-
-	//printf("deck instance top card :%d\n ",deck_instance.top_card);
-	//printf("answer outside %c%c%c \n ",deck_instance.list[deck_instance.top_card-1].suit , deck_instance.list[deck_instance.top_card-1].rank[0] ,            deck_instance.list[deck_instance.top_card-1].rank[1]);
-
-
-	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
-	deck_instance.top_card=deck_instance.top_card -1;
-	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
-	deck_instance.top_card=deck_instance.top_card -1;
-	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
-	deck_instance.top_card=deck_instance.top_card -1;
-	printf("\n");	
-	printf("users hand size: %d \n",user.hand_size);
-	//add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );
-	//deck_instance.top_card=deck_instance.top_card -1;	
-	//printf("computer hand size: %d \n",computer.hand_size);	
-			
-	printf("\n\n");
-
-	printDeck(&user);
-	printf("\n");
-	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
-	deck_instance.top_card=deck_instance.top_card -1;
-	printf("\n");
-	printDeck(&user);
-
-
-
-*/
-}
---------------------------------------------------------------------------------------------------
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -287,7 +180,7 @@ int main(int args, char* argv[])
 #include <stdio.h>
 #include "card.h"
 #include "deck.h"
-
+#include <stdbool.h>
 /*
  * Structure: player
  * -----------------
@@ -325,7 +218,7 @@ struct player computer;
 //printf("answer: %c%c%c \n ",(*new_card).suit ,(*new_card).rank[0],(*new_card).rank[1]   );
 //printf("card added: %c%c%c \n ",  new_card->suit ,  new_card->rank[0],new_card->rank[1]   );
 
-int  (struct player* target, struct card* new_card){
+int  add_card(struct player* target, struct card* new_card){
 //create node new_card and add this node to the end of the players deck which is a linked list of nodes
 
 if (target == NULL || new_card==NULL)
@@ -383,7 +276,7 @@ return head;
 int remove_card(struct player* target, struct card* old_card){
 //make structs
 struct hand* head = target->card_list;
-struct hand* remove = old_card;
+struct hand* remove = old_card;// old card is the node inside the same list
 
 int *reset = target->card_list;    
 
@@ -392,9 +285,10 @@ if (head == NULL || remove == NULL){
 	return -1;
 }
 
-//First case: Node to be deleted is head node
+//First case: Node to be deleted is head node , 
 if (head == remove){
 	head = remove->next;
+	target->card_list = head; //redefine front
 }
 
 //Second Case: Node to be deleted is last node
@@ -426,21 +320,6 @@ free(remove);
 return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
  * Function: check_add_book
  * ------------------------
@@ -453,6 +332,7 @@ return;
  *  Return: a char that indicates the book that was added; return 0 if no book added.
  */
 
+/*
 char check_add_book(struct player* target){
 	//10 is not included, seperate case
 	char R[12]={'A','2','3','4','5','6','7','8','9','J','Q','K'};
@@ -517,7 +397,7 @@ if (ten == 4){
 
 }//function
 
-
+*/
 
 /*
  * Function: search
@@ -529,10 +409,10 @@ if (ten == 4){
  *
  *  Return: If the player has a card of that rank, return 1, else return 0
  */
-//search(&computer,rank);
+		//search(&computer,rank);
 int search(struct player* target, char rank){
 char R[12]={'A','2','3','4','5','6','7','8','9','J','Q','K'};
-bool check=false;
+bool check;
 while (target->card_list != NULL){
 		for (int i=0; i<12;i++){
 			if (rank==R[i]){check=true;}		
@@ -568,21 +448,24 @@ int transfer_cards(struct player* src, struct player* dest, char rank){
 // 2 pointers for the players hands
 struct hand* recieving_card=dest->card_list;// the destination recieves
 struct hand* losing_card=src->card_list;  // the source is giving their card
+char suit1='C';
+strcat(suit1,rank); //CA,C2,C3..C10..CQ
 
-if (rank=="10"){
-rank=="1"; //set rank to 1 because 10 is 2 characters
-}
+char suit2='D';
+strcat(suit2,rank);//DA,D2,D3..D10..DQ
 
-rank1="C"rank;
-rank2="D"rank;
-rank3="H"rank;
-rank4="S"rank;
+char suit3='H';
+strcat(suit3,rank);//HA,H2,H3..H10..HQ
+
+char suit4='S';
+strcat(suit4,rank);//SA,S2,s3..S10..SQ
 // go thru source deck to remove the card being asked for an
 while (src->card_list != NULL){
-		//checks if the rank transfering is equal to any cards in the deck, if so remove it and 
+	
+//printf("%s",src->card_list) points to the entire string at that head
 // checks to see if any 4suits are in the hand of the source
-	// src->card_list is the entire name of the card so S8 
-	if (rank1 || rank2 || rank3 || rank4 ==src->card_list){
+//if C2=D2 or H2=D2 or S2=D2 or D2=D2 , since 1 of them is true, remove that pointer and add it to the other deck 
+	if (suit1 || suit2 || suit3 || suit4 ==src->card_list){
 		
 		//-> top is the location of the node that is being altered
 		remove_card(&src,&src->card_list->top);		
@@ -593,9 +476,6 @@ while (src->card_list != NULL){
 	src->card_list=src->card_list->next;
 
 } 
-
-
-
 
 /*
  * Function: game_over
@@ -656,10 +536,138 @@ char computer_play(struct player* target);
  *   target: the player's hand to check
  * 
  *   returns: return a valid selected rank
- */
-char user_play(struct player* target);
+ */   //takes in &user only
+char user_play(struct player* target){
+printf("Player 1's turn, enter a Rank:");
+
+char rank=getchar();
+
+//if rank is not in the deck. print an error,and 
+//skips over if card not in deck
+if (search(&user,rank) ==0){
+printf("Error - must have at least one card from rank to play");
+ user_play(&user);
+}
+
+}
 
 #endif
+
+----------------------------------------------------------------------------------------------------
+
+
+#include "deck.h"
+#include "player.h"
+//#include "<stdio.h>"
+int main(int args, char* argv[]) 
+{
+	shuffle();
+	deal_player_cards(&user);     //works
+	printDeck(&user);
+	//printDeck refers to an updated deck everytime it is called 
+	deal_player_cards(&computer); // works
+	//printDeck(&computer);
+	deck_size();			// works 52-7-7=38
+		 					
+	
+	//Enter into an endless loop until the game is over
+//	while(1){
+		//user goes first
+		char rank=user_play(&user); // get input from user
+		//check of the computer has any suits that match that rank
+		if(search(&computer,rank)){// if a single card from rank is found, go thru the entire deck and then remove all of them 
+		
+		// CALL THE TRANSFER CARDS FUNCTION SINCE CARDS ARE FOUND
+		// the computer is giving the user the cards that match rank
+		transfer_cards(&computer,&user,rank);
+
+		} 
+			// rank not found in other hand, go fish
+		else{
+	// take a card from the deck and give it to the user so &user
+add_card(&user, &deck_instance.list[deck_instance.top_card-1] );	
+	deck_instance.top_card=deck_instance.top_card -1;// decrement deck
+		}
+//-----------------------------------------------------------
+/*
+
+		
+
+
+		rank=user_play(&computer); // get input from computer
+		//check of the user has any suits that match that rank
+		if( search(&user,rank) ){
+		// CALL THE TRANSFER CARDS FUNCTION SINCE CARDS ARE FOUND
+		// the user is giving the computer the cards that match rank
+		transfer_cards(&user,&computer,rank);
+		}
+			// rank not found in other hand, go fish
+		else{   	
+	// take a card from the deck and give it to the computer so &computer
+add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );	
+	deck_instance.top_card=deck_instance.top_card -1;// decrement deck
+//		} end while
+/*
+
+
+		//check whether game is over
+		int prompt=0;
+		if(game_over(&user))	{
+	fprintf(stderr,"Congratulations! You beat the computer player. \n");
+		}
+			prompt=prompt_next();
+		else if(game_over(&computer)){
+fprintf(stderr,"Sorry! You lose the game to the computer player. \n");
+			prompt=prompt_next();
+			}
+
+	
+
+
+
+
+
+
+
+
+
+
+
+	//for (int i=0;i<52;i++){
+//	printf("%c%c%c \n",deck_instance.list[i].suit,deck_instance.list[i].rank[0],deck_instance.list[i].rank[1]);}
+
+
+	//printf("deck instance top card :%d\n ",deck_instance.top_card);
+	//printf("answer outside %c%c%c \n ",deck_instance.list[deck_instance.top_card-1].suit , deck_instance.list[deck_instance.top_card-1].rank[0] ,            deck_instance.list[deck_instance.top_card-1].rank[1]);
+
+
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	deck_instance.top_card=deck_instance.top_card -1;
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	deck_instance.top_card=deck_instance.top_card -1;
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	deck_instance.top_card=deck_instance.top_card -1;
+	printf("\n");	
+	printf("users hand size: %d \n",user.hand_size);
+//add_card(&computer, &deck_instance.list[deck_instance.top_card-1] );
+	//deck_instance.top_card=deck_instance.top_card -1;	
+	//printf("computer hand size: %d \n",computer.hand_size);	
+			
+	printf("\n\n");
+
+	printDeck(&user);
+	printf("\n");
+	add_card(&user, &deck_instance.list[deck_instance.top_card-1] );
+	deck_instance.top_card=deck_instance.top_card -1;
+	printf("\n");
+	printDeck(&user);
+
+
+
+*/
+}
+
+
 
 
 
