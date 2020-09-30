@@ -40,10 +40,6 @@ struct player computer;
  *  returns: return 0 if no error, non-zero otherwise
  */
 
-//2 different ways of printing the card 
-//printf("answer: %c%c%c \n ",(*new_card).suit ,(*new_card).rank[0],(*new_card).rank[1]   );
-//printf("card added: %c%c%c \n ",  new_card->suit ,  new_card->rank[0],new_card->rank[1]   );
-
 int  add_card(struct player* target, struct card* new_card){
 //create node new_card and add this node to the end of the players deck which is a linked list of nodes
 
@@ -84,11 +80,15 @@ else{
         head->next = new_item;
 	}
 target->hand_size = target->hand_size+1;// increment hand size
-// may need to take out deck_instance.top since you can add card to other hands
-//return head;
+//after the new card has been added, check if there are any books( 4 suits of same rank)
+
+//check_add_book(struct player* target) do target since &player arg above in add_card
+check_add_book(target);
+
 return 0; // no error
 }
-
+//***********************************************************
+//***********************************************************
 /*
 
  * Function: remove_card
@@ -164,72 +164,64 @@ return 0;
  *  Return: a char that indicates the book that was added; return 0 if no book added.
  */
 
-/*
+
 char check_add_book(struct player* target){
 	//10 is not included, seperate case
 	char R[12]={'A','2','3','4','5','6','7','8','9','J','Q','K'};
 
 	char counter = 0;
-
+// traverses for each rank seperately for counter to make sense
 for (int i=0;i<12;i++){		//iterate every case except 10
 	while (target->card_list != NULL){
-		//need to make a string of the card ur checking without the suit
 //the card being checked in the hand changes so the check changes too		
 		card_string=target->card_list->top;	//S9-->9 removes suit
 		char check=card_string->rank[0]
+		print("just the rank is: %s",check);
 
-		//S9 --> 9 =='9' then counter = counter+1
-	if (check == R[i]){
-		counter = counter + 1
-	}// end if statement 
-		target->card_list = target_card_list->next;
-	}//end while loop
+		if (strcmp(R[i],check)==0){
+			counter = counter + 1
+		}// end if statement 
+			
+// when the counter is 4 go thru hand and remove all 4 
+		if (counter == 4){
+//checks to see if characters match, since 4 are in list, remove all
 
-	// when the counter is 4 go thru hand and remove all 4 
-	if (counter == 4){
-		while (target->card_list != NULL){
-	//checks to see if characters match, since 4 are in list, remove all
-               		if (check == R[i]){
-				remove_card(&user, &reset->top);
-			}// end check
-			target->card_list=target->card_list->next;
-		}//end while
-	target.book[book_size]=R[i];// add that char to the book
-	target.book_size=target.book_size+1;// increment to next location
-  	}//if counter end
+			remove_card(target,target->card_list);
+		}// all cards have been removed	
 
- }//for loop for 12/13 cases
+		target.book[book_size]=R[i];// add char to the book location
+		target.book_size=target.book_size+1;// increment to next 
+  		}//if counter
 
+	target->card_list = target_card_list->next; // traverse the list
+ 
+	}//end while loop for each case
+
+}//for loop for 12/13 cases
 
 int ten;// seperately checks if the number 10 appears 4 times
 while (target->card_list != NULL){
 	card_string=target->card_list->top;
 				//check if rank==10 case
-	char check_ten[2]=card_string->rank[0],card_string->rank[1]
+	char check_ten[2];
+	check_ten[0]=card_string->rank[0];
+	check_ten[1]=card_string->rank[1];
 
-                if (check_ten == "10"){
-                        ten = ten + 1;
-                                                    }
-                target->card_list = target_card_list->next;
-                                         }
-// if 10 appears 4 times in deck, remove it and add to book
-if (ten == 4){
-	while (target->card_list != NULL){
-          	if (check_ten=="10"){
-			//remove head of card_list since 4 are found
-               remove_card(&user,&reset->top 							    }
-                         target->card_list=target->card_list->next;
-                                                            
-                                                 }
+        if (strcmp(check_ten,"10")==0){
+		ten = ten + 1;
+	}// end if
+// if ten counter hits 4, all suits are in hand, remove and add to book 
+	if (ten == 4){
+		 remove_card(target,target->card_list) 			
+	}//all4 suits have been accounted for & cards have been removed	
+ 
 	target.book[book_size]="10";  // add 10 to the book
 	target.book_size=target.book_size+1;// increment book
-
-     
-  }//if counter
+	target->card_list = target_card_list->next; //traverse list 
+   }    // end while loop 
 
 }//function
 
-*/
 
 /*
  * Function: search
