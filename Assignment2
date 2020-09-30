@@ -82,8 +82,8 @@ else{
 target->hand_size = target->hand_size+1;// increment hand size
 //after the new card has been added, check if there are any books( 4 suits of same rank)
 
-//check_add_book(struct player* target) do target since &player arg above in add_card
-check_add_book(target);
+//check_add_book(struct player* target) do target since &player arg above in add_card		 every time a card is added to any deck, check if there are now 4 of them in total
+//check_add_book(target);
 
 return 0; // no error
 }
@@ -168,18 +168,18 @@ return 0;
 char check_add_book(struct player* target){
 	//10 is not included, seperate case
 	char R[12]={'A','2','3','4','5','6','7','8','9','J','Q','K'};
-
 	char counter = 0;
 // traverses for each rank seperately for counter to make sense
+printf("inside");
 for (int i=0;i<12;i++){		//iterate every case except 10
 	while (target->card_list != NULL){
 //the card being checked in the hand changes so the check changes too		
-		card_string=target->card_list->top;	//S9-->9 removes suit
-		char check=card_string->rank[0]
-		print("just the rank is: %s",check);
+	char check;
+	check=target->card_list->top.rank[0]; // c
+		printf("just the rank is: %s",check);
 
 		if (strcmp(R[i],check)==0){
-			counter = counter + 1
+			counter = counter + 1;
 		}// end if statement 
 			
 // when the counter is 4 go thru hand and remove all 4 
@@ -187,13 +187,12 @@ for (int i=0;i<12;i++){		//iterate every case except 10
 //checks to see if characters match, since 4 are in list, remove all
 
 			remove_card(target,target->card_list);
-		}// all cards have been removed	
-
-		target.book[book_size]=R[i];// add char to the book location
-		target.book_size=target.book_size+1;// increment to next 
+		target->book[target->book_size]=R[i];// add char to the book location
+		target->book_size=target->book_size+1;// increment to next 
+		return printf("this rank was added to book-->%s",R[i]);
   		}//if counter
 
-	target->card_list = target_card_list->next; // traverse the list
+	target->card_list = target->card_list->next; // traverse the list
  
 	}//end while loop for each case
 
@@ -201,26 +200,29 @@ for (int i=0;i<12;i++){		//iterate every case except 10
 
 int ten;// seperately checks if the number 10 appears 4 times
 while (target->card_list != NULL){
-	card_string=target->card_list->top;
-				//check if rank==10 case
+
 	char check_ten[2];
-	check_ten[0]=card_string->rank[0];
-	check_ten[1]=card_string->rank[1];
+	check_ten[0]=target->card_list->top.rank[0];
+	check_ten[1]=target->card_list->top.rank[1];
 
         if (strcmp(check_ten,"10")==0){
 		ten = ten + 1;
 	}// end if
 // if ten counter hits 4, all suits are in hand, remove and add to book 
 	if (ten == 4){
-		 remove_card(target,target->card_list) 			
+		remove_card(target,target->card_list); 			
+		target->book[target->book_size]="10";  // add 10 to the book
+		target->book_size=target->book_size+1;// increment book	
+		return printf("this rank was added to book-->10");	
 	}//all4 suits have been accounted for & cards have been removed	
  
-	target.book[book_size]="10";  // add 10 to the book
-	target.book_size=target.book_size+1;// increment book
-	target->card_list = target_card_list->next; //traverse list 
+
+	target->card_list = target->card_list->next; //traverse list 
    }    // end while loop 
 
-}//function
+return 0 // the counter/ ten if statement was never read so return 0 default
+
+}// end of function check_add_books
 
 
 /*
@@ -491,7 +493,6 @@ return rank; // returns valid selected rank
 }
 
 #endif
-
 ------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------
